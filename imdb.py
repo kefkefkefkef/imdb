@@ -124,7 +124,7 @@ def main():
 
     st.write(f'LTSM: {predict_sentence(review, model)}')
     end = time.time()
-    st.write(end - start)
+    st.write(f'{(end - start):.2f} sec')
     
 
 if __name__ == '__main__':
