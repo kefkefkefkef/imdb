@@ -101,7 +101,7 @@ def main():
         result = model.to(device)(preprocess_single_string(text, seq_len=SEQ_LEN, vocab_to_int=vocab_to_int).unsqueeze(0)).sigmoid().round().item()
         return 'negative' if result == 0.0 else 'positive'
     review = st.text_input('Enter review')
-    start = time.time()
+    start1 = time.time()
     
     automodel = transformers.AutoModelForSequenceClassification.from_pretrained(
     'distilbert-base-uncased-finetuned-sst-2-english'
@@ -120,11 +120,13 @@ def main():
     outputs = automodel(**input_tokens)
     st.write('Sentiment Predictions')
     st.write(f'\nBERT: {[automodel.config.id2label[i.item()] for i in outputs.logits.argmax(-1)]}')
-
+    end1 = time.time()
+    st.write(f'{(end1 - start1):.2f} sec')
+    start2 = time.time()
 
     st.write(f'LTSM: {predict_sentence(review, model)}')
-    end = time.time()
-    st.write(f'{(end - start):.2f} sec')
+    end2 = time.time()
+    st.write(f'{(end2 - start2):.2f} sec')
     
 
 if __name__ == '__main__':
