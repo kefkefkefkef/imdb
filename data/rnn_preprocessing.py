@@ -4,6 +4,8 @@ import numpy as np
 import torch
 
 from nltk.corpus import stopwords
+import nltk
+nltk.download('stopwords')
 stop_words = set(stopwords.words('english'))
 
 def data_preprocessing(text: str) -> str:
@@ -75,3 +77,5 @@ def preprocess_single_string(
     result_padded = padding([result_list], seq_len)[0]
 
     return torch.tensor(result_padded)
+
+
