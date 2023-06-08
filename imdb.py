@@ -7,8 +7,7 @@ import streamlit as st
 import re
 import string
 from collections import Counter
-from nltk.corpus import stopwords
-stop_words = set(stopwords.words('english'))
+
 from gensim.models import Word2Vec
 from string import punctuation
 import transformers
