@@ -17,7 +17,9 @@ warnings.filterwarnings('ignore')
 from sklearn.model_selection import train_test_split
 import time
 
-
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+import pickle
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 import torch.nn as nn
@@ -100,7 +102,40 @@ def main():
     def predict_sentence(text:str, model: nn.Module):
         result = model.to(device)(preprocess_single_string(text, seq_len=SEQ_LEN, vocab_to_int=vocab_to_int).unsqueeze(0)).sigmoid().round().item()
         return 'negative' if result == 0.0 else 'positive'
+    
+    #Bag Tfidf
+    # bagvectorizer = CountVectorizer(max_df=0.5,
+    # min_df=5,
+    # stop_words="english",)
+    # bvect = bagvectorizer.fit(preprocessed)
+    # X_bag = bvect.transform(preprocessed)
+
+    tfid_vectorizer = TfidfVectorizer(
+    max_df=0.5,
+    min_df=5)
+    vect = tfid_vectorizer.fit(preprocessed)
+    X_tfidf = vect.transform(preprocessed)
+    
+    tfidf_model = pickle.load(open('models/modeltfidf.sav', 'rb'))
+    # bag_model = pickle.load(open('models/modelbag.sav', 'rb'))
+    # def predictbag(text):
+    #     result = bag_model.predict(vect.transform([text]))
+    #     return 'negative' if result == [0] else 'positive'
+
+    def predicttf(text):
+        result = tfidf_model.predict(vect.transform([text]))
+        return 'negative' if result == [0] else 'positive'
+    
+        
+
+
+    
+    
+    
+    
+    
     review = st.text_input('Enter review')
+
     start1 = time.time()
     
     automodel = transformers.AutoModelForSequenceClassification.from_pretrained(
@@ -127,6 +162,16 @@ def main():
     st.write(f'LTSM: {predict_sentence(review, model)}')
     end2 = time.time()
     st.write(f'{(end2 - start2):.2f} sec')
+    # start3 = time.time()
+    # st.write(f'bag+log: {predictbag(review)}')
+    # end3 = time.time()
+    # st.write(f'{(end3 - start3):.2f} sec')
+    start4 = time.time()
+    st.write(f'tfidf+log: {predicttf(review)}')
+    end4 = time.time()
+    st.write(f'{(end4 - start4):.2f} sec')
+
+
     
 
 if __name__ == '__main__':
